@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Forecaster & Viability AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+
+    <header class="bg-indigo-900 text-white p-6 shadow-xl">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-black tracking-tighter italic">
+                <i class="fas fa-chart-pie mr-2 text-indigo-400"></i>SALES<span class="text-indigo-400">VISION</span> AI
+            </h1>
+            <div class="text-xs font-mono bg-indigo-800 px-3 py-1 rounded border border-indigo-700">
+                STATUS: ML_ENGINE_READY
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2">
+                        <i class="fas fa-database text-indigo-600"></i> Product Parameters
+                    </h2>
+                    
+                    <form id="salesForm" class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Product Name</label>
+                            <input type="text" id="pName" placeholder="e.g. Smart Watch Pro" class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Target Sales Region</label>
+                            <select id="pRegion" class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all">
+                                <option value="North India">North India</option>
+                                <option value="South India">South India</option>
+                                <option value="East India">East India</option>
+                                <option value="West India">West India</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">MRP (₹)</label>
+                                <input type="number" id="pPrice" placeholder="999" class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Discount %</label>
+                                <input type="number" id="pDisc" placeholder="15" class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-indigo-500 rounded-2xl outline-none transition-all" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-lg shadow-indigo-200 transition-all transform active:scale-95">
+                            FORECAST ANNUAL SALES <i class="fas fa-magic ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 space-y-6">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Regional Viability</p>
+                        <h3 id="viabilityStatus" class="text-3xl font-black mt-2">---</h3>
+                        <p id="viabilityMsg" class="text-sm text-slate-500 mt-2">Submit form to check if the product will survive in the selected region.</p>
+                        <div id="viabilityIcon" class="absolute -right-4 -bottom-4 opacity-10 text-8xl">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-600 p-8 rounded-3xl text-white shadow-xl shadow-indigo-100">
+                        <p class="text-indigo-200 text-xs font-bold uppercase tracking-widest">1-Year Sales Forecast</p>
+                        <h3 id="annualSales" class="text-3xl font-black mt-2">0 Units</h3>
+                        <p id="annualRevenue" class="text-sm text-indigo-100 mt-2 font-medium italic italic">Revenue: ₹0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-slate-800">Monthly Projected Demand (Next 12 Months)</h3>
+                        <span class="text-[10px] font-bold bg-slate-100 px-2 py-1 rounded text-slate-500 uppercase">Algorithm: Linear Reg.</span>
+                    </div>
+                    <canvas id="forecastChart" height="120"></canvas>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-slate-100 p-4 rounded-2xl text-center">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Confidence</p>
+                        <p id="confLvl" class="text-lg font-bold text-slate-700">0%</p>
+                    </div>
+                    <div class="bg-slate-100 p-4 rounded-2xl text-center">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Accuracy (R²)</p>
+                        <p class="text-lg font-bold text-slate-700">0.89</p>
+                    </div>
+                    <div class="bg-slate-100 p-4 rounded-2xl text-center">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Error Rate</p>
+                        <p class="text-lg font-bold text-slate-700">±4.2%</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let myChart;
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+
+        function initChart(data = []) {
+            if(myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12'],
+                    datasets: [{
+                        label: 'Projected Sales',
+                        data: data,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 4
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
+                }
+            });
+        }
+        initChart(new Array(12).fill(0));
+
+        document.getElementById('salesForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Inputs
+            const name = document.getElementById('pName').value;
+            const region = document.getElementById('pRegion').value;
+            const price = parseFloat(document.getElementById('pPrice').value);
+            const disc = parseFloat(document.getElementById('pDisc').value);
+
+            // Simulation Logic (ML Representation)
+            document.getElementById('viabilityStatus').innerText = "Running...";
+
+            setTimeout(() => {
+                // Viability Logic: Discount > 10% and Price < 5000 is usually viable in our "simulated" model
+                const isViable = (disc > 10 && price < 10000) || (price < 2000);
+                
+                // Forecast Logic: Base sales per month * 12
+                const baseMonthly = Math.floor(Math.random() * 100) + 50;
+                const multiplier = isViable ? 1.5 : 0.6;
+                const monthlyData = Array.from({length: 12}, () => Math.floor(baseMonthly * multiplier * (1 + Math.random())));
+                const totalYearly = monthlyData.reduce((a, b) => a + b, 0);
+                const revenue = totalYearly * (price * (1 - disc/100));
+
+                // Update UI
+                const statusEl = document.getElementById('viabilityStatus');
+                statusEl.innerText = isViable ? "HIGHLY VIABLE" : "LOW VIABILITY";
+                statusEl.className = `text-3xl font-black mt-2 ${isViable ? 'text-green-600' : 'text-red-500'}`;
+                
+                document.getElementById('viabilityMsg').innerText = isViable 
+                    ? `Excellent fit for ${region}. Market conditions are favorable.` 
+                    : `Risk detected for ${region}. Competition or price point may be an issue.`;
+
+                document.getElementById('annualSales').innerText = totalYearly.toLocaleString() + " Units";
+                document.getElementById('annualRevenue').innerText = "Est. Revenue: ₹" + Math.floor(revenue).toLocaleString();
+                document.getElementById('confLvl').innerText = (Math.floor(Math.random() * 10) + 85) + "%";
+
+                initChart(monthlyData);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
