@@ -10,8 +10,16 @@ app = Flask(__name__)
 
 # Load ML models
 MODEL_PATH = 'models'
-logistic_model = pickle.load(open(os.path.join(MODEL_PATH, 'logistic_model.pkl'), 'rb'))
-linear_model = pickle.load(open(os.path.join(MODEL_PATH, 'linear_model.pkl'), 'rb'))
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'models')
+
+def load_model(filename):
+    path = os.path.join(MODEL_PATH, filename)
+    return pickle.load(open(path, 'rb'))
+
+logistic_model = load_model('logistic_model.pkl')
+linear_model = load_model('linear_model.pkl')
 
 #dictionary implementation...
 
